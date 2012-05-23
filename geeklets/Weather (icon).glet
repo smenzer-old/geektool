@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Alignment</key>
+	<integer>2</integer>
+	<key>GeekletFrame</key>
+	<string>{{1934, 87}, {295, 176}}</string>
+	<key>HasShadow</key>
+	<false/>
+	<key>Identifier</key>
+	<string>org.tynsoe.geeklet.image</string>
+	<key>ImageURL</key>
+	<string>http://scott.menzer.org/geektools/weather.php</string>
+	<key>Name</key>
+	<string>Weather (icon) (2)</string>
+	<key>RefreshInterval</key>
+	<integer>600</integer>
+</dict>
+</plist>
