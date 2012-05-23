@@ -62,7 +62,7 @@ import os
 
 # The URL of the feed(s). The URLs should be between the square brackets, in quotes, and separated by 
 # commas.
-feeds = ["https://www.rememberthemilk.com/atom/smenzer/20688916/?tok=eJwFwckNAjEMAMCKVrLjKy7H8SEhAQ*WF9Uz0zkHiWYtJUWzCDo71Tk9qHZ4grMkA4ByQYBIymax2ARhc92vfv-6cz0f9-daoHs76mXNZ0Ia23uEK0pGCbsCCxjFoYJn0O1kNZ7iSFGw1SyB2H*KCyrJ"]
+feeds = ["xxxxxxxxx"]
 
 # These should be "True" or "False"
 DISPLAY_THE_REAL_LIST_A_TASK_IS_IN_IF_THE_FEED_IS_FOR_A_SMART_LIST = False
