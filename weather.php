@@ -19,30 +19,32 @@ $location_json = preg_replace('/\<!\-\-.*/','',$location);
 $location_array = json_decode($location_json, true);
 unset($location_array["html"]);
 
-foreach ($location_array["locations"] as $id=>$val) {
-	$location_id = $id;
-	break;
+if (is_array($location_array["locations"])) {
+	foreach ($location_array["locations"] as $id=>$val) {
+		$location_id = $id;
+		break;
+	}
+
+	$weather_url = "http://weather.yahoo.com/redirwoei/$location_id";
+
+	curl_setopt ($ch, CURLOPT_FOLLOWLOCATION,1); // follow redirects
+	curl_setopt ($ch, CURLOPT_URL, $weather_url);
+	$file_contents = curl_exec($ch);
+	curl_close($ch);
+
+	$divStart = "<div class=\"forecast-icon\"";
+	$strEnd = "'); _background-image/* */: none;";
+	$start = strpos($file_contents, $divStart) + 50;
+	$end = strpos($file_contents, $strEnd);
+	$length = $end-$start;
+
+	$imagepath=substr($file_contents, $start , $length);
+	$image=imagecreatefrompng($imagepath);
+
+	imagealphablending($image, true);
+	imagesavealpha($image, true);
+	header('Content-Type: image/png');
+	imagepng($image);
 }
-
-$weather_url = "http://weather.yahoo.com/redirwoei/$location_id";
-
-curl_setopt ($ch, CURLOPT_FOLLOWLOCATION,1); // follow redirects
-curl_setopt ($ch, CURLOPT_URL, $weather_url);
-$file_contents = curl_exec($ch);
-curl_close($ch);
-
-$divStart = "<div class=\"forecast-icon\"";
-$strEnd = "'); _background-image/* */: none;";
-$start = strpos($file_contents, $divStart) + 50;
-$end = strpos($file_contents, $strEnd);
-$length = $end-$start;
-
-$imagepath=substr($file_contents, $start , $length);
-$image=imagecreatefrompng($imagepath);
-
-imagealphablending($image, true);
-imagesavealpha($image, true);
-header('Content-Type: image/png');
-imagepng($image);
 ?>
 

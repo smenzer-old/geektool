@@ -62,7 +62,7 @@ import os
 
 # The URL of the feed(s). The URLs should be between the square brackets, in quotes, and separated by 
 # commas.
-feeds = ["xxxxxxxxx"]
+feeds = ["https://www.rememberthemilk.com/atom/smenzer/20688916/?tok=eJwFwckNAjEMAMCKVrLjKy7H8SEhAQ*WF9Uz0zkHiWYtJUWzCDo71Tk9qHZ4grMkA4ByQYBIymax2ARhc92vfv-6cz0f9-daoHs76mXNZ0Ia23uEK0pGCbsCCxjFoYJn0O1kNZ7iSFGw1SyB2H*KCyrJ"]
 
 # These should be "True" or "False"
 DISPLAY_THE_REAL_LIST_A_TASK_IS_IN_IF_THE_FEED_IS_FOR_A_SMART_LIST = False
@@ -164,17 +164,17 @@ def displayList(listTitle, tasks):
 #				s = "\t%s\n\t\t%s" % (task["title"], task["due"])
 				if (task["due"] != "never"):
 #					due = "\n\t\t%s" % (task["due"])
-					due = "%s\n\t\t" % (task["due"])					
+					due = "[%s] " % (task["due"])					
 				else: 
 					due = ""
 					
 				if (task["priority"] != "none"):
-					prio = "(%s) " % (task["priority"])
+					prio = "(%s)\t" % (task["priority"])
 				else:
-					prio = "    "
+					prio = "\t"
 					
 #				s = "\t%s%s" % (task["title"], due)
-				s = "\t%s%s%s" % (due,prio,task["title"])				
+				s = "\t%s%s%s" % (prio,due,task["title"])				
 				print s.encode("utf-8")
 			if(DISPLAY_TAGS and task["tags"] != "none"):
 				s = "\t\t%s" % task["tags"]

@@ -42,7 +42,7 @@ CalCalendarStore.defaultCalendarStore.eventsWithPredicate(predicate).each do |ev
 #Display event details
   print "\t" + (event.isAllDay ? "" : started_at.strftime("%I:%M %p") + "   ") if ends_at >= Time.now 
   print event.title if ends_at >= Time.now 
-  print "\n\t\t\t@ " + event.location if ends_at >= Time.now
+  print "\n\t\t\t@ " + event.location if ends_at >= Time.now && event.location != nil && event.location != ''
   print "\n" if ends_at >= Time.now 
   day_cache = started_at.day
 end
