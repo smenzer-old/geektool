@@ -1,5 +1,4 @@
 <?php
-//$url = "http://weather.yahoo.com/united-states/new-york/new-york-12761342/";
 $ch = curl_init();
 $timeout = 20; // set to zero for no timeout
 curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -10,31 +9,22 @@ curl_setopt ($ch, CURLOPT_URL, $zip_url);
 $zip_json = json_decode(curl_exec($ch), true);
 $zip = $zip_json["zipCode"];
 
-
-$location_url = "http://weather.yahoo.com/locationWidget/widget/htdocs/locationWidget.php?appId=us_weather&useFallback=false&filter_country=US&filter_name=USA&filter_status=FALSE&locale=en-US&language=ENG&showRecent=true&showSaved=false&showForm=false&showCheckbox=true&showDefault=true&rnd=1316639934013&default=&location=$zip";
+$location_url = "http://weather.yahooapis.com/forecastrss?p=$zip&u=f";
 curl_setopt ($ch, CURLOPT_URL, $location_url);
 $location = curl_exec($ch);
 
-$location_json = preg_replace('/\<!\-\-.*/','',$location);
-$location_array = json_decode($location_json, true);
-unset($location_array["html"]);
+$location_xml = simplexml_load_string($location);
+$weather_url = (isset($location_xml->channel->item->link)) ? $location_xml->channel->item->link : null;
 
-if (is_array($location_array["locations"])) {
-	foreach ($location_array["locations"] as $id=>$val) {
-		$location_id = $id;
-		break;
-	}
-
-	$weather_url = "http://weather.yahoo.com/redirwoei/$location_id";
-
+if ($weather_url) {
 	curl_setopt ($ch, CURLOPT_FOLLOWLOCATION,1); // follow redirects
 	curl_setopt ($ch, CURLOPT_URL, $weather_url);
 	$file_contents = curl_exec($ch);
 	curl_close($ch);
 
-	$divStart = "<div class=\"forecast-icon\"";
-	$strEnd = "'); _background-image/* */: none;";
-	$start = strpos($file_contents, $divStart) + 50;
+	$divStart = "<div class=\"current-weather\" id=\"obs-current-weather\" style=\"background:url('";
+	$strEnd = "') no-repeat scroll 0% 0% transparent; _background-image/* */:";
+	$start = strpos($file_contents, $divStart) + strlen($divStart);
 	$end = strpos($file_contents, $strEnd);
 	$length = $end-$start;
 
@@ -46,5 +36,3 @@ if (is_array($location_array["locations"])) {
 	header('Content-Type: image/png');
 	imagepng($image);
 }
-?>
-
