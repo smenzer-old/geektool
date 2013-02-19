@@ -13,11 +13,16 @@ range = (Time.local(Time.now.year, Time.now.mon, Time.now.day) - before)..(Time.
 
 # add calendars here
 appnexus = CalCalendarStore.defaultCalendarStore.calendarWithUID("63CEF5C0-80F9-4A2C-AF6A-E5753D3BC2BB")
-googlepersonal = CalCalendarStore.defaultCalendarStore.calendarWithUID("2F82415B-0C13-4071-AEC1-5AF1B079404B")
-#holidy = CalCalendarStore.defaultCalendarStore.calendarWithUID("??????????????")
+googlepersonal = CalCalendarStore.defaultCalendarStore.calendarWithUID("E972398A-8357-49B9-B28A-6B87D8572DA0")
+
+# determine id's and names of calendars in the system
+#CalCalendarStore.defaultCalendarStore.calendars.each do |event|
+#    print event.uid + " " + event.title + "\n";
+#end
+#exit;
 
 # update calendars array on this line
-predicate = CalCalendarStore.eventPredicateWithStartDate(NSDate.dateWithString(range.begin.to_s), endDate:NSDate.dateWithString(range.end.to_s), calendars:[appnexus,googlepersonal])
+predicate = CalCalendarStore.eventPredicateWithStartDate(NSDate.dateWithString(range.begin.to_s), endDate:NSDate.dateWithString(range.end.to_s), calendars:[appnexus, googlepersonal])
 day_cache = nil
 
 CalCalendarStore.defaultCalendarStore.eventsWithPredicate(predicate).each do |event|
