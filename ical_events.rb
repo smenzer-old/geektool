@@ -12,7 +12,7 @@ after = (1 * 3600 * 24)
 range = (Time.local(Time.now.year, Time.now.mon, Time.now.day) - before)..(Time.local(Time.now.year, Time.now.mon, Time.now.day) + after)
 
 # add calendars here
-appnexus = CalCalendarStore.defaultCalendarStore.calendarWithUID("63CEF5C0-80F9-4A2C-AF6A-E5753D3BC2BB")
+appnexus = CalCalendarStore.defaultCalendarStore.calendarWithUID("688A560E-6CEC-450E-BC9A-48C3A8FF4D0E")
 googlepersonal = CalCalendarStore.defaultCalendarStore.calendarWithUID("E972398A-8357-49B9-B28A-6B87D8572DA0")
 
 # determine id's and names of calendars in the system
