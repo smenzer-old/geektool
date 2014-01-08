@@ -1,53 +1,173 @@
 #!/usr/local/bin/macruby
-framework 'calendarstore'
+ 
+def colorize(text, color_code)
+  "\e[0;#{color_code}m#{text}"
+end
+ 
+def black(text=""); colorize(text, 30); end
+def red(text=""); colorize(text, 31); end
+def green(text=""); colorize(text, 32); end
+def yellow(text=""); colorize(text, 33); end
+def blue(text=""); colorize(text, 34); end
+def magenta(text=""); colorize(text, 35); end
+def cyan(text=""); colorize(text, 36); end
+def white(text=""); colorize(text, 37); end
+ 
+def bold(&block)
+  code = "\e[1m"
+ 
+  if block_given?
+    begin
+      print code
+      yield
+    ensure
+      print regular
+    end
+  else
+    code
+  end
+end
+ 
+def regular
+  "\e[0m"
+end
+ 
+framework 'eventkit'
+ 
+store = EKEventStore.alloc.initWithAccessToEntityTypes EKEntityTypeEvent | EKEntityTypeReminder
 
-# This required MacRuby to be installed.
-# A package installer for 10.6+ is available at http://www.macruby.org/
+appnexus = store.calendarWithIdentifier:"86308BD1-973E-4A6A-A118-28DE26BFEBBB"
+googlepersonal = store.calendarWithIdentifier:"721AAB6A-2F22-465E-A5F8-0B4CCF1F2961"
 
-# Period is the number of days (including today) to include in the list.
-# The default is three days.
-before = (0 * 3600 * 24)
-after = (1 * 3600 * 24)
+predicate = store.predicateForEventsWithStartDate NSDate.dateWithNaturalLanguageString('today at midnight'),
+              endDate: NSDate.dateWithNaturalLanguageString('tomorrow at midnight'),
+              calendars: [appnexus, googlepersonal]
+ 
+date = NSDateFormatter.new
+date.setDateStyle NSDateFormatterLongStyle
+date.setTimeStyle NSDateFormatterNoStyle
+ 
+time = NSDateFormatter.new
+time.setDateFormat "hh:mm"
+ 
+events = store.eventsMatchingPredicate(predicate)
+ 
+OnlyDate = NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit
+ 
+require 'date'
+ 
+class Time
+  def midnight?
+    [hour, min, sec, usec].all? { |val| val == 0 }
+  end
+end
+ 
+class EKEvent
+  def days
+    calendar = NSCalendar.currentCalendar
+ 
+    first = calendar.dateFromComponents(calendar.components OnlyDate, fromDate: self.startDate)
+    last = calendar.dateFromComponents(calendar.components OnlyDate, fromDate: self.endDate)
+ 
+    days = []
+ 
+    next_day = NSDateComponents.new
+    next_day.setDay 1
+ 
+    date = first
+ 
+    days << date
+ 
+    while o = date.compare(last) and o == NSOrderedAscending
+      date = calendar.dateByAddingComponents next_day, toDate: date, options: 0
+      days << date
+    end
+ 
+    if not last.midnight? and not days.last == last
+      days << last
+    end
+ 
+    days
+  end
+end
+ 
+now = Time.now
+ 
+table = Hash.new{|h,k| h[k] = [] }
+ 
+events.each do |event|
+  event.days.each do |day|
+    table[day] << event
+  end
+end
+ 
+# sort days
+table = Hash[ table.sort_by{ |date, events| date } ]
+ 
+table.each do |day, events|
+ 
+  bold do
+    puts date.stringFromDate(day)
+  end
+ 
+  # sort events
+  events.sort_by(&:startDate).each do |event|
+ 
+    start = event.startDate
+    ends = event.endDate
+ 
+	if now > ends
+		next
+	end
 
-range = (Time.local(Time.now.year, Time.now.mon, Time.now.day) - before)..(Time.local(Time.now.year, Time.now.mon, Time.now.day) + after)
+    print ' ' * 3
 
-# add calendars here
-appnexus = CalCalendarStore.defaultCalendarStore.calendarWithUID("688A560E-6CEC-450E-BC9A-48C3A8FF4D0E")
-googlepersonal = CalCalendarStore.defaultCalendarStore.calendarWithUID("E972398A-8357-49B9-B28A-6B87D8572DA0")
-
-# determine id's and names of calendars in the system
-#CalCalendarStore.defaultCalendarStore.calendars.each do |event|
-#    print event.uid + " " + event.title + "\n";
-#end
-#exit;
-
-# update calendars array on this line
-predicate = CalCalendarStore.eventPredicateWithStartDate(NSDate.dateWithString(range.begin.to_s), endDate:NSDate.dateWithString(range.end.to_s), calendars:[appnexus, googlepersonal])
-day_cache = nil
-
-CalCalendarStore.defaultCalendarStore.eventsWithPredicate(predicate).each do |event|
-  started_at = Time.at(event.startDate.timeIntervalSince1970)
-  ends_at = Time.at(event.endDate.timeIntervalSince1970)
-
-#Display DAY MONTH and DATE then each event
-  print "\n" if day_cache != nil && started_at.day != day_cache
-
-#  print "TODAY'S AGENDA\n" if started_at.day != day_cache
-  print started_at.strftime("- %A %B %d").upcase + "\n" if started_at.day != day_cache
-
-#Display a check if event has ended
-#  print " ✓" if ends_at < Time.now 
-
-#Display a star if event is current
-  print " ☆" if started_at < Time.now && ends_at > Time.now
-  
-#Display ∞ if event is all day
-  print " ∞" if event.isAllDay && (started_at > Time.now || ends_at < Time.now)
-
-#Display event details
-  print "\t" + (event.isAllDay ? "" : started_at.strftime("%I:%M %p") + "   ") if ends_at >= Time.now 
-  print event.title if ends_at >= Time.now 
-  print "\n\t\t\t@ " + event.location if ends_at >= Time.now && event.location != nil && event.location != ''
-  print "\n" if ends_at >= Time.now 
-  day_cache = started_at.day
+    current = false
+    if now > start and now < ends
+      current = true
+      print bold
+      if day.to_date == now.to_date
+		print '✓'
+      else
+		print "\u2606" # 22c6
+#          print regular
+      end
+	  print regular
+    else
+      print ' '
+    end
+ 
+    print ' '
+ 
+    # puts [event.allDay?, start, day, ends ].inspect
+ 
+    if event.allDay? or start.to_date != day.to_date && ends.to_date != day.to_date
+      print "(all day)\t"
+    else
+      if start.to_date == day.to_date
+        print time.stringFromDate(start)
+      else
+        print "  \u21c7  "
+      end
+ 
+      print ' - '
+ 
+      if ends.to_date == day.to_date
+        print time.stringFromDate(ends)
+      else
+        print "  \u21c9  "
+      end
+    end
+ 
+    print "\t"
+ 
+    print bold if current
+    print event.title
+    print regular
+ 
+    print " @ #{event.location}" if event.location and not event.location.empty?
+    print "\n"
+  end
+ 
+  puts
 end
