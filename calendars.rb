@@ -1,6 +1,9 @@
 #!/usr/local/bin/macruby
-framework 'calendarstore'
-CalCalendarStore.defaultCalendarStore.calendars.each do |calendar|
-print "\n" + calendar.uid + " " + calendar.title
+framework 'eventkit'
+
+store = EKEventStore.alloc.initWithAccessToEntityTypes EKEntityTypeEvent | EKEntityTypeReminder
+cals = store.calendarsForEntityType(EKEntityTypeEvent)
+
+cals.each do |calendar|
+print calendar.calendarIdentifier + " " + calendar.title + "\n"
 end
-print "\n"
