@@ -141,6 +141,7 @@ table.each do |day, events|
  
     # puts [event.allDay?, start, day, ends ].inspect
  
+	print red if current
     if event.allDay? or start.to_date != day.to_date && ends.to_date != day.to_date
       print "(all day)\t"
     else
@@ -160,12 +161,14 @@ table.each do |day, events|
     end
  
     print "\t"
- 
+
+	print white
     print bold if current
+	print "[#{event.location}] " if event.location and not event.location.empty?
     print event.title
     print regular
  
-    print " @ #{event.location}" if event.location and not event.location.empty?
+#    print " @ #{event.location}" if event.location and not event.location.empty?
     print "\n"
   end
  
