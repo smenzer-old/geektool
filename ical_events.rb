@@ -36,8 +36,8 @@ framework 'eventkit'
  
 store = EKEventStore.alloc.initWithAccessToEntityTypes EKEntityTypeEvent | EKEntityTypeReminder
 
-appnexus = store.calendarWithIdentifier:"86308BD1-973E-4A6A-A118-28DE26BFEBBB"
-googlepersonal = store.calendarWithIdentifier:"721AAB6A-2F22-465E-A5F8-0B4CCF1F2961"
+appnexus = store.calendarWithIdentifier:"86BDD79D-CB9A-4D51-84AD-E707F4276C2D"
+googlepersonal = store.calendarWithIdentifier:"62E56BB7-6BD4-4BB7-867A-7EAF8C0D5AC9"
 
 predicate = store.predicateForEventsWithStartDate NSDate.dateWithNaturalLanguageString('today at midnight'),
               endDate: NSDate.dateWithNaturalLanguageString('tomorrow at midnight'),
